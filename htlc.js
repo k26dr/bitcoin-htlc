@@ -1,11 +1,16 @@
+const { ECPairFactory } = require('ecpair')
+const ecc = require('tiny-secp256k1')
 const bitcoin = require('bitcoinjs-lib') 
 const crypto = require('crypto');
 const fs = require('fs')
+
+const ECPair = ECPairFactory(ecc);
 
 // SETTINGS: MODIFY AS NEEDED
 // It sets the HTLC expiration to a specified number of seconds in the future
 // Default: 1 day
 const HTLC_EXPIRATION = 86400
+const NETWORK = 'regtest'
 
 function getPubKeyHash(address) {
    return bitcoin.address.fromBech32(address).data;
@@ -15,18 +20,24 @@ function getPubKeyHash(address) {
 const preimage = Buffer.from(crypto.getRandomValues(new Uint8Array(32)))
 const hash = crypto.createHash('sha256').update(preimage).digest()
 
+// Generate keys
+const recipientKeyPair = ECPair.makeRandom({ network: bitcoin.networks[NETWORK] })
+const refundKeyPair = ECPair.makeRandom({ network: bitcoin.networks[NETWORK] })
+
 const swapParams = {
-  recipientAddress: "bcrt1qlscaecwfnycgjkz20695m9f8kudtlcrjd7nu09",
-  refundAddress: "bcrt1qvzx5ns2a0t8zswutdew7ncq4lkspxlkza466ja",
+  recipientPrivateWIF: recipientKeyPair.toWIF(),
+  recipientAddress: bitcoin.payments.p2wpkh({ pubkey: recipientKeyPair.publicKey }).address,
+  refundPrivateWIF: refundKeyPair.toWIF(),
+  refundAddress: bitcoin.payments.p2wpkh({ pubkey: refundKeyPair.publicKey }).address,
   preimage: preimage.toString('hex'),
   contractHash: hash.toString('hex'),
   expiration: (Date.now() / 1000 | 0) + HTLC_EXPIRATION,
-  network: 'regtest',
+  network: NETWORK,
   addressType: 'p2wsh'
 }
 
 // Network for transaction: bitcoin, regtest, or testnet
-const NETWORK = bitcoin.networks[swapParams.network]
+const network = bitcoin.networks[swapParams.network]
 
 const recipientPubKeyHash = getPubKeyHash(swapParams.recipientAddress)
 const refundPubKeyHash = getPubKeyHash(swapParams.refundAddress)
@@ -60,11 +71,10 @@ if (![97, 98].includes(Buffer.byteLength(script))) {
 }
 
 const p2wsh = bitcoin.payments.p2wsh({
-    redeem: { output: script, network: NETWORK },
-    network: NETWORK 
+    redeem: { output: script, network: network },
+    network: network 
 });
 swapParams.witnessScript = script.toString('hex')
 swapParams.htlcAddress = p2wsh.address
-console.log(p2wsh.output)
 console.log(swapParams)
 fs.writeFileSync("data.json", JSON.stringify(swapParams, null, 2))
