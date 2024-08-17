@@ -1,0 +1,11 @@
+{
+  "recipientAddress": "bcrt1qfpmqjju94vzq64lm0mzwway9ljyx9ckryassjv",
+  "refundAddress": "bcrt1qvzx5ns2a0t8zswutdew7ncq4lkspxlkza466ja",
+  "preimage": "6d3dfb8ec583b106752d9c221d5d2e50dbff695c94eaf0330a79a4ef4b0c8e52",
+  "contractHash": "7eb0ebd3e7269a4e11d4bca56c122655d47d61833448322ca9fc52da0094ed54",
+  "expiration": 1724018404,
+  "network": "regtest",
+  "addressType": "p2wsh",
+  "witnessScript": "6382012088a8207eb0ebd3e7269a4e11d4bca56c122655d47d61833448322ca9fc52da0094ed548876a914fc31dce1c9993089584a7e8b4d9527b71abfe0726704e46ec266b17576a914608d49c15d7ace283b8b6e5de9e015fda0137ec26888ac",
+  "htlcAddress": "bcrt1qhfdhlz9fwkjwhcr3scp6mtmdvqc3v9fz7cuzkq9lwqfz9t2jksgqggz333"
+}
