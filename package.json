@@ -1,13 +1,11 @@
 {
-  "name": "bitcoin-htlc",
+  "name": "bip-199",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
+  "description": "BIP-199 helpers for Bitcoin HTLC and atomic swaps",
+  "main": "htlc.js",
+  "scripts": {},
+  "keywords": ["bitcoin"],
+  "author": "Kedar Iyer",
   "license": "ISC",
   "dependencies": {
     "bitcoinjs-lib": "^6.1.6",

@@ -21,14 +21,16 @@ const preimage = Buffer.from(crypto.getRandomValues(new Uint8Array(32)))
 const hash = crypto.createHash('sha256').update(preimage).digest()
 
 // Generate keys
-const recipientKeyPair = ECPair.makeRandom({ network: bitcoin.networks[NETWORK] })
-const refundKeyPair = ECPair.makeRandom({ network: bitcoin.networks[NETWORK] })
+const recipientKeyPair = ECPair.makeRandom()
+const refundKeyPair = ECPair.makeRandom()
+const recipientAddress = bitcoin.payments.p2wpkh({ pubkey: recipientKeyPair.publicKey, network: bitcoin.networks[NETWORK] }).address
+const refundAddress = bitcoin.payments.p2wpkh({ pubkey: refundKeyPair.publicKey, network: bitcoin.networks[NETWORK] }).address
 
 const swapParams = {
   recipientPrivateWIF: recipientKeyPair.toWIF(),
-  recipientAddress: bitcoin.payments.p2wpkh({ pubkey: recipientKeyPair.publicKey }).address,
+  recipientAddress,
   refundPrivateWIF: refundKeyPair.toWIF(),
-  refundAddress: bitcoin.payments.p2wpkh({ pubkey: refundKeyPair.publicKey }).address,
+  refundAddress,
   preimage: preimage.toString('hex'),
   contractHash: hash.toString('hex'),
   expiration: (Date.now() / 1000 | 0) + HTLC_EXPIRATION,
@@ -45,9 +47,6 @@ const OPS = bitcoin.script.OPS;
 
 const script = bitcoin.script.compile([
     OPS.OP_IF,
-    OPS.OP_SIZE,
-    bitcoin.script.number.encode(32),
-    OPS.OP_EQUALVERIFY,
     OPS.OP_SHA256,
     hash,
     OPS.OP_EQUALVERIFY,
@@ -65,10 +64,6 @@ const script = bitcoin.script.compile([
     OPS.OP_EQUALVERIFY,
     OPS.OP_CHECKSIG,
 ]);
-
-if (![97, 98].includes(Buffer.byteLength(script))) {
-    throw new Error('Invalid swap script');
-}
 
 const p2wsh = bitcoin.payments.p2wsh({
     redeem: { output: script, network: network },
