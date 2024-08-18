@@ -14,7 +14,8 @@ const ECPair = ECPairFactory(ecc);
 const swapParams = JSON.parse(fs.readFileSync("data.json", "utf8"))
 
 const txHash = process.argv[2]
-const vout = Number(process.argv[3]) || 0
+const value = Number(process.argv[3])
+const vout = Number(process.argv[4]) || 0
 
 const input = {
   hash: txHash,
@@ -24,10 +25,6 @@ const input = {
 
 constructRedeemTx()
 async function constructRedeemTx () {
-  const getTransactionResponse = await exec('bitcoin-core.cli -regtest gettransaction ' + txHash)
-  const rawTx = JSON.parse(getTransactionResponse.stdout).hex
-  const htlcTx = bitcoin.Transaction.fromHex(rawTx)
-  const value = htlcTx.outs[vout].value
 
   // This is equivaluent to OP_0 OP_20 WITNESS_SCRIPT_HASH
   const witnessScript = Buffer.from(swapParams.witnessScript, 'hex')
