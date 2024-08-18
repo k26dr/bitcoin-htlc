@@ -1,9 +1,13 @@
+// Credit to Eunovo for a lot of the help here: 
+// https://github.com/Eunovo/scripting-with-bitcoinjs/blob/main/src/pay_to_address_with_secret.ts
+
 const { ECPairFactory } = require('ecpair')
 const ecc = require('tiny-secp256k1')
 const bitcoin = require('bitcoinjs-lib')
 const fs = require('fs')
 const { promisify } = require('util');
 const exec = promisify(require('child_process').exec)
+const varuint = require("varuint-bitcoin")
 
 const ECPair = ECPairFactory(ecc);
 
@@ -26,9 +30,11 @@ async function constructRedeemTx () {
   const value = htlcTx.outs[vout].value
 
   // This is equivaluent to OP_0 OP_20 WITNESS_SCRIPT_HASH
-  const witnessScriptHash = bitcoin.crypto.sha256(Buffer.from(swapParams.witnessScript, 'hex'))
+  const witnessScript = Buffer.from(swapParams.witnessScript, 'hex')
+  const witnessScriptHash = bitcoin.crypto.sha256(witnessScript)
   const witnessUtxoScript = Buffer.concat([Buffer.from([0x00, 0x20]), witnessScriptHash])
 
+  // Segwit transactions require you to use Psbt to sign (afaik)
   const psbt = new bitcoin.Psbt({ network: bitcoin.networks[swapParams.network] })
   psbt.addInput({
     hash: txHash,
@@ -47,34 +53,25 @@ async function constructRedeemTx () {
 
   const recipientKeypair = ECPair.fromWIF(swapParams.recipientPrivateWIF)
   psbt.signInput(0, recipientKeypair)
+
   const sig = psbt.data.inputs[0].partialSig[0].signature
   
-  const OPS = bitcoin.script.OPS
-  const swapInput = bitcoin.script.compile([
+  const witnessStack = [
     sig,
     recipientKeypair.publicKey,
     Buffer.from(swapParams.preimage, 'hex'),
-    OPS.OP_TRUE
-  ])
+    Buffer.from([0x01]), // Segwit OP_TRUE is 0x01
+    witnessScript
+  ]
 
-  //const finalizeInput = (_inputIndex, input) => {
-  //  const redeemPayment = payments.p2wsh({
-  //      redeem: {
-  //        input: bitcoin.script.compile([
+  // serialize witness
+  let finalScriptWitness = Buffer.from([0x05]) // 1-byte: Number of items
+  for (let i=0; i < 5; i++) {
+    finalScriptWitness = Buffer.concat([ finalScriptWitness, new Uint8Array([witnessStack[i].length]), witnessStack[i] ])
+  }
+  
+  psbt.updateInput(0, { finalScriptWitness })
 
-  //        ]),
-  //        output: input.witnessScript
-  //      }
-  //    });
-
-  //    const finalScriptWitness = witnessStackToScriptWitness(
-  //      redeemPayment.witness ?? []
-  //    );
-
-  //    return {
-  //      finalScriptSig: Buffer.from(""),
-  //      finalScriptWitness
-  //    }
-  //}
-
+  const tx = psbt.extractTransaction();
+  console.log(tx.toHex())
 }
