@@ -23,22 +23,21 @@ async function constructRedeemTx () {
   const getTransactionResponse = await exec('bitcoin-core.cli -regtest gettransaction ' + txHash)
   const rawTx = JSON.parse(getTransactionResponse.stdout).hex
   const htlcTx = bitcoin.Transaction.fromHex(rawTx)
-  console.log(htlcTx.outs[vout].script.toString('hex'))
   const value = htlcTx.outs[vout].value
 
   // This is equivaluent to OP_0 OP_20 WITNESS_SCRIPT_HASH
-  const witnessUtxoScript = Buffer.from('0020' + swapParams.witnessScript, 'hex')
+  const witnessScriptHash = bitcoin.crypto.sha256(Buffer.from(swapParams.witnessScript, 'hex'))
+  const witnessUtxoScript = Buffer.concat([Buffer.from([0x00, 0x20]), witnessScriptHash])
 
-
-  const psbt = new bitcoin.Transaction({ network: bitcoin.networks[swapParams.network] })
+  const psbt = new bitcoin.Psbt({ network: bitcoin.networks[swapParams.network] })
   psbt.addInput({
     hash: txHash,
     index: vout, 
+    witnessScript: Buffer.from(swapParams.witnessScript, 'hex'),
     witnessUtxo: {
       script: witnessUtxoScript,
       value
-    },
-    witnessScript: Buffer.from(swapParams.witnessScript, 'hex')
+    }
   })
   const txFee = 2000;
   psbt.addOutput({
@@ -46,8 +45,36 @@ async function constructRedeemTx () {
     value: (value - txFee),
   })
 
-  const signer = ECPair.fromWIF(swapParams.recipientPrivateWIF)
-  psbt.signInput(0, signer)
+  const recipientKeypair = ECPair.fromWIF(swapParams.recipientPrivateWIF)
+  psbt.signInput(0, recipientKeypair)
+  const sig = psbt.data.inputs[0].partialSig[0].signature
+  
+  const OPS = bitcoin.script.OPS
+  const swapInput = bitcoin.script.compile([
+    sig,
+    recipientKeypair.publicKey,
+    Buffer.from(swapParams.preimage, 'hex'),
+    OPS.OP_TRUE
+  ])
 
+  //const finalizeInput = (_inputIndex, input) => {
+  //  const redeemPayment = payments.p2wsh({
+  //      redeem: {
+  //        input: bitcoin.script.compile([
+
+  //        ]),
+  //        output: input.witnessScript
+  //      }
+  //    });
+
+  //    const finalScriptWitness = witnessStackToScriptWitness(
+  //      redeemPayment.witness ?? []
+  //    );
+
+  //    return {
+  //      finalScriptSig: Buffer.from(""),
+  //      finalScriptWitness
+  //    }
+  //}
 
 }
