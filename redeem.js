@@ -1,6 +1,3 @@
-// Credit to Eunovo for a lot of the help here: 
-// https://github.com/Eunovo/scripting-with-bitcoinjs/blob/main/src/pay_to_address_with_secret.ts
-
 const { ECPairFactory } = require('ecpair')
 const ecc = require('tiny-secp256k1')
 const bitcoin = require('bitcoinjs-lib')
