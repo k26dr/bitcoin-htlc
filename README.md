@@ -33,14 +33,15 @@ Output:
 const { createHTLC } = require('bip-199')
 
 // Create HTLC with custom expiration and hash on mainnet
-const htlc = createHTLC({
-  recipientAddress: 'bcrt1qfjwqqxmf6ajmwy48pzs7ml33udt0smhdc8seya',
-  refundAddress: 'bcrt1q2yuazzncplkcexkzcayj886eugkttwxefvwvm3',
+const htlc2 = createHTLC({
+  recipientAddress: 'bc1qqcjmr6de85qv2gq54y9x59ctqxc3pjeyskqtdr',
+  refundAddress: 'bc1qwr3ksdcgy7dq0mgl7gs7a0ay3kdp5r5yudk6ma',
   hash: "368278313373e68a55c8361623fc06e1fa6c8251c90348fccac939879257144d",
   network: 'bitcoin',
   expiration: (Date.now() / 1000 | 0) + 3600, // 1 hour
 })
-console.log(htlc)
+
+console.log(htlc2)
 ```
 
 Output:
