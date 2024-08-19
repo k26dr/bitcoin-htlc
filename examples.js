@@ -34,14 +34,14 @@ const htlc2 = createHTLC({
 console.log(htlc2)
 
 // Redeem HTLC
-// Normally I would have to send a payment to htlc1.htlcAddress and get the TXID, value, and vout of the HTLC. I'm gonna dummy those values here. 
+// This is a dummy redeem. It won't actually clear consensus if you try and send it with `bitcoin-core.cli sendrawtransaction` but it's here as a code example.
 const TXID = "2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62"
 const value = 1e8
-const vout = 1
+const vout = 0
 const redeemTxRaw = redeemHTLC({
-  preimage: htlc1.preimage,
+  preimage: htlc.preimage,
   recipientWIF: recipientKeypair.toWIF(),
-  witnessScript: htlc1.witnessScript,
+  witnessScript: htlc.witnessScript,
   txHash: TXID,
   value,
   feeRate: 10,

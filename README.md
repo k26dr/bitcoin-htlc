@@ -64,7 +64,9 @@ See [examples.js](examples.js) for more examples. Documentation will be provided
 
 ## Redeeming an HTLC
 
-First send bitcoin to `htlc1.htlcAddress`. Once you do that get the raw transaction hex and inspect it to get the vout index of the HTLC.
+First send your bitcoin to `htlc.htlcAddress`. This will lock it. 
+
+Once you do that get the raw transaction hex and inspect it to get the vout index of the HTLC. I have done it here using bitcoin-cli, but you can do it on a block explorer as well. 
 
 ```bash
 > bitcoin-core.cli -regtest sendtoaddress bcrt1qd730p4644wqtvfa5h3dpdyhfu4anm6mqlsqc7al8tv0k3smazs4qcpczrq 1
@@ -149,16 +151,18 @@ First send bitcoin to `htlc1.htlcAddress`. Once you do that get the raw transact
 }
 ```
 
-We're looking for the 1 BTC output, so you can see the vout = 1. Now run your redeem tx using that txid, value, and vout
+We're looking for the 1 BTC output, so you can see the vout index is 1. There's a 50% chance your vout index is actually 0, so make sure you check that. 
+
+Now run your redeem tx using that txid, value, and vout.
 
 ```js
 const TXID = "2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62"
 const value = 1e8 // 1 bitcoin in sats
 const vout = 1
 const redeemTxRaw = redeemHTLC({
-  preimage: htlc1.preimage,
+  preimage: htlc.preimage,
   recipientWIF: recipientKeypair.toWIF(),
-  witnessScript: htlc1.witnessScript,
+  witnessScript: htlc.witnessScript,
   txHash: TXID,
   value,
   feeRate: 10,
@@ -172,6 +176,11 @@ Output:
 ```
 02000000000101626dd30d06b521160b9469e578f21c9b5cf4fc7755b2edab84fcda041aca352d0100000000ffffffff0130d9f505000000001600144775723b2f720f03489abb90356e6408e22fd0ce05473044022004235b860b5af19f13f58af6c16fb21496dc74acbb00b91ca3e2303248d08ec3022046f38e94f17286740a56f41b60068c39e90674277d132cd0821c4d1c2f89e4430121028c38a7431c0d87d69c7d4d0bc0d2ba394e59f9493990d1998b40612416bc651b2074279120f6fe355c598f0411f115a0398aa07db066ea81136f5c85219bfa0bdb01015d63a8209aa0fe59b6373bd6758caa9cb4278934568f437615937ecc4c4f8c2a0030759e8876a9144775723b2f720f03489abb90356e6408e22fd0ce6704a825c566b17576a9144775723b2f720f03489abb90356e6408e22fd0ce6888ac00000000
 ```
+
+Broadcast the transaction to the network
+
+```bash
+> bitcoin-core.cli sendrawtransaction 02000000000101626dd30d06b521160b9469e578f21c9b5cf4fc7755b2edab84fcda041aca352d0100000000ffffffff0130d9f505000000001600144775723b2f720f03489abb90356e6408e22fd0ce05473044022004235b860b5af19f13f58af6c16fb21496dc74acbb00b91ca3e2303248d08ec3022046f38e94f17286740a56f41b60068c39e90674277d132cd0821c4d1c2f89e4430121028c38a7431c0d87d69c7d4d0bc0d2ba394e59f9493990d1998b40612416bc651b2074279120f6fe355c598f0411f115a0398aa07db066ea81136f5c85219bfa0bdb01015d63a8209aa0fe59b6373bd6758caa9cb4278934568f437615937ecc4c4f8c2a0030759e8876a9144775723b2f720f03489abb90356e6408e22fd0ce6704a825c566b17576a9144775723b2f720f03489abb90356e6408e22fd0ce6888ac00000000
 
 ## Refunding an HTLC
 

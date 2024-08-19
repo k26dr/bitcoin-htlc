@@ -111,8 +111,8 @@ function createHTLC(options) {
  * @param {String} options.txHash         Transacion hash with the HTLC output you want to unlock
  * @param {Number} options.value          The number of sats locked in the HTLC. IMPORTANT: If you send too low a number, the remainder of your sats will be burned. Proceed with caution. Test your code on regtest before using it in production.
  * @param {Number} options.feeRate        Fee rate in sat/vB. Must be provided manually because there's no RPC connection built into the library. 
- * @param {Number} options.vout           (optional)(default: 0): the index number of the UTXO in txHash to use. will default to the first output. Specify an index number if you want to use a different output. 
- * @return {String}               Raw redeem transaction to broadcast to network. send it with `bitcoin-cli sendrawtransaction <transaction>`
+ * @param {Number} options.vout           The index number of the UTXO in txHash to use. 
+ * @return {String}                       Raw redeem transaction to broadcast to network. send it with `bitcoin-cli sendrawtransaction <transaction>`
 */
 function redeemHTLC(options) {
   const vout = options.vout || 0
