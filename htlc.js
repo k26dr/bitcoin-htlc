@@ -102,13 +102,11 @@ function createHTLC(options) {
 }
 
 
-// TODO: Add some fee logic
 /**
  * Produces a raw transaction to redeem an existing HTLC
  * @param {Object} options
  * @param {String} options.preimage       Required to unlock HTLC. Must be in HEX format.
  * @param {String} options.recipientWIF   Private key of recipient address in WIF format
- * @param {String} options.recipientAddress   Public address of recipient
  * @param {String} options.witnessScript  Witness script for HTLC in hex format. If you used createHTLC, you can grab it from there, or you will have to ask your counterparty for it.
  * @param {String} options.txHash         Transacion hash with the HTLC output you want to unlock
  * @param {Number} options.value          The number of sats locked in the HTLC. IMPORTANT: If you send too low a number, the remainder of your sats will be burned. Proceed with caution. Test your code on regtest before using it in production.
@@ -119,6 +117,10 @@ function createHTLC(options) {
 function redeemHTLC(options) {
   const vout = options.vout || 0
   const recipientKeypair = ECPair.fromWIF(options.recipientWIF)
+  const recipientAddress = bitcoin.payments.p2wpkh({
+      pubkey: recipientKeypair.publicKey,
+      network: bitcoin.networks[options.network],
+  }).address;
 
   // This is equivaluent to OP_0 OP_20 WITNESS_SCRIPT_HASH
   const witnessScript = Buffer.from(options.witnessScript, 'hex')
@@ -133,13 +135,13 @@ function redeemHTLC(options) {
     witnessScript: Buffer.from(options.witnessScript, 'hex'),
     witnessUtxo: {
       script: witnessUtxoScript,
-      value
+      value: options.value
     }
   })
   const txFee = options.feeRate * 200;
   psbt.addOutput({
-    address: options.recipientAddress,
-    value: (value - txFee),
+    address: recipientAddress,
+    value: (options.value - txFee),
   })
 
   psbt.signInput(0, recipientKeypair)
