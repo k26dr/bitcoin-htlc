@@ -4,7 +4,7 @@
   "description": "BIP-199 helpers for Bitcoin HTLC and atomic swaps",
   "main": "htlc.js",
   "scripts": {},
-  "keywords": ["bitcoin"],
+  "keywords": ["bitcoin", "htlc", "atomic swap"],
   "author": "Kedar Iyer",
   "license": "ISC",
   "dependencies": {
