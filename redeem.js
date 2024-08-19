@@ -20,52 +20,48 @@ const input = {
   sequence: 0,
 }
 
-constructRedeemTx()
-async function constructRedeemTx () {
+// This is equivaluent to OP_0 OP_20 WITNESS_SCRIPT_HASH
+const witnessScript = Buffer.from(swapParams.witnessScript, 'hex')
+const witnessScriptHash = bitcoin.crypto.sha256(witnessScript)
+const witnessUtxoScript = Buffer.concat([Buffer.from([0x00, 0x20]), witnessScriptHash])
 
-  // This is equivaluent to OP_0 OP_20 WITNESS_SCRIPT_HASH
-  const witnessScript = Buffer.from(swapParams.witnessScript, 'hex')
-  const witnessScriptHash = bitcoin.crypto.sha256(witnessScript)
-  const witnessUtxoScript = Buffer.concat([Buffer.from([0x00, 0x20]), witnessScriptHash])
-
-  // Segwit transactions require you to use Psbt to sign (afaik)
-  const psbt = new bitcoin.Psbt({ network: bitcoin.networks[swapParams.network] })
-  psbt.addInput({
-    hash: txHash,
-    index: vout, 
-    witnessScript: Buffer.from(swapParams.witnessScript, 'hex'),
-    witnessUtxo: {
-      script: witnessUtxoScript,
-      value
-    }
-  })
-  const txFee = 2000;
-  psbt.addOutput({
-    address: swapParams.recipientAddress,
-    value: (value - txFee),
-  })
-
-  const recipientKeypair = ECPair.fromWIF(swapParams.recipientPrivateWIF)
-  psbt.signInput(0, recipientKeypair)
-
-  const sig = psbt.data.inputs[0].partialSig[0].signature
-  
-  const witnessStack = [
-    sig,
-    recipientKeypair.publicKey,
-    Buffer.from(swapParams.preimage, 'hex'),
-    Buffer.from([0x01]), // Segwit OP_TRUE is 0x01
-    witnessScript
-  ]
-
-  // serialize witness
-  let finalScriptWitness = Buffer.from([0x05]) // 1-byte: Number of items
-  for (let i=0; i < 5; i++) {
-    finalScriptWitness = Buffer.concat([ finalScriptWitness, new Uint8Array([witnessStack[i].length]), witnessStack[i] ])
+// Segwit transactions require you to use Psbt to sign (afaik)
+const psbt = new bitcoin.Psbt({ network: bitcoin.networks[swapParams.network] })
+psbt.addInput({
+  hash: txHash,
+  index: vout, 
+  witnessScript: Buffer.from(swapParams.witnessScript, 'hex'),
+  witnessUtxo: {
+    script: witnessUtxoScript,
+    value
   }
-  
-  psbt.updateInput(0, { finalScriptWitness })
+})
+const txFee = 2000;
+psbt.addOutput({
+  address: swapParams.recipientAddress,
+  value: (value - txFee),
+})
 
-  const tx = psbt.extractTransaction();
-  console.log(tx.toHex())
+const recipientKeypair = ECPair.fromWIF(swapParams.recipientPrivateWIF)
+psbt.signInput(0, recipientKeypair)
+
+const sig = psbt.data.inputs[0].partialSig[0].signature
+
+const witnessStack = [
+  sig,
+  recipientKeypair.publicKey,
+  Buffer.from(swapParams.preimage, 'hex'),
+  Buffer.from([0x01]), // Segwit OP_TRUE is 0x01
+  witnessScript
+]
+
+// serialize witness
+let finalScriptWitness = Buffer.from([0x05]) // 1-byte: Number of items
+for (let i=0; i < 5; i++) {
+  finalScriptWitness = Buffer.concat([ finalScriptWitness, new Uint8Array([witnessStack[i].length]), witnessStack[i] ])
 }
+
+psbt.updateInput(0, { finalScriptWitness })
+
+const tx = psbt.extractTransaction();
+console.log(tx.toHex())
