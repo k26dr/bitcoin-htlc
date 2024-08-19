@@ -45,6 +45,8 @@ const recipientPubKeyHash = getPubKeyHash(swapParams.recipientAddress)
 const refundPubKeyHash = getPubKeyHash(swapParams.refundAddress)
 const OPS = bitcoin.script.OPS;
 
+
+// See https://en.bitcoin.it/wiki/BIP_0199 for full BIP-199 spec
 const script = bitcoin.script.compile([
     OPS.OP_IF,
     OPS.OP_SHA256,
