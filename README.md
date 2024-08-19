@@ -60,7 +60,7 @@ Output:
 }
 ```
 
-See [examples.js](examples.js) for more examples. Documentation will be provided soon. Until then you can look at the docstrings in [htlc.js](htlc.js)
+See [examples.js](examples.js) for more examples. For documentation, look at the docstrings in [htlc.js](htlc.js)
 
 ## Redeeming an HTLC
 
