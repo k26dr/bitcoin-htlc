@@ -3,19 +3,38 @@ const crypto = require('crypto');
 
 const HTLC_EXPIRATION = 86400
 
+module.exports = {
+  createHTLC, 
+  getPubKeyHash
+}
+
 function getPubKeyHash(address) {
    return bitcoin.address.fromBech32(address).data;
 }
 
-// options:
-//  recipientAddress: the address with the right to unlock the HTLC with the preimage
-//  refundAddress: the address to refund the HTLC to if remains unclaimed after the expiration
-//  expiration (optional): defaults to 1 day after the time of the function call. pass in a UNIX timestamp in seconds if you want a custom expiry.
-//  network (optional): 'regtest' (default) || 'testnet' || 'bitcoin'
-//     will add support for litecoin and other non-bitcoin chains later
-//  hash (optional): if you're in charge of producing the hash for your swap, leave this blank and we will generate one
-//     if your counterparty gave you one, pass it in as a hex string here
-function createHTLCAddress(options) {
+//  params:
+//   options:
+//    recipientAddress: the address with the right to unlock the HTLC with the preimage
+//    refundAddress: the address to refund the HTLC to if remains unclaimed after the expiration
+//    expiration (optional): defaults to 1 day after the time of the function call. pass in a UNIX timestamp in seconds if you want a custom expiry.
+//    network (optional): 'regtest' (default) || 'testnet' || 'bitcoin'
+//       will add support for litecoin and other non-bitcoin chains later
+//    hash (optional): if you're in charge of producing the hash for your swap, leave this blank and we will generate one
+//       if your counterparty gave you one, pass it in as a hex string here
+// 
+//  returns:
+//    swapParams:
+//      recipientAddress
+//      refundAddress
+//      preimage
+//      contractHash
+//      expiration: UNIX timestamp
+//      network
+//      addressType: 'p2wsh'
+//      witnessScript: you will need this to unlock the HTLC
+//      htlcAddress: send coins to this address to lock them
+
+function createHTLC(options) {
   const NETWORK = options.network || 'regtest'
 
   // Preimage for HTLC. Must be unique every time. If a hash is specified, the counterparty has the preimage and this field can be left null
@@ -72,4 +91,3 @@ function createHTLCAddress(options) {
 
   return swapParams
 }
-
