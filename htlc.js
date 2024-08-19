@@ -1,3 +1,5 @@
+// TODO: Split off getWitnessHash function so others can use it
+
 const bitcoin = require('bitcoinjs-lib') 
 const crypto = require('crypto');
 
@@ -12,28 +14,26 @@ function getPubKeyHash(address) {
    return bitcoin.address.fromBech32(address).data;
 }
 
-//  params:
-//   options:
-//    recipientAddress: the address with the right to unlock the HTLC with the preimage
-//    refundAddress: the address to refund the HTLC to if remains unclaimed after the expiration
-//    expiration (optional): defaults to 1 day after the time of the function call. pass in a UNIX timestamp in seconds if you want a custom expiry.
-//    network (optional): 'regtest' (default) || 'testnet' || 'bitcoin'
-//       will add support for litecoin and other non-bitcoin chains later
-//    hash (optional): if you're in charge of producing the hash for your swap, leave this blank and we will generate one
-//       if your counterparty gave you one, pass it in as a hex string here
-// 
-//  returns:
-//    swapParams:
-//      recipientAddress
-//      refundAddress
-//      preimage
-//      contractHash
-//      expiration: UNIX timestamp
-//      network
-//      addressType: 'p2wsh'
-//      witnessScript: you will need this to unlock the HTLC
-//      htlcAddress: send coins to this address to lock them
-
+/*
+ * @param {Object} options
+ * @param {String} options.recipientAddress: the address with the right to unlock the HTLC with the preimage
+ * @param {String} options.refundAddress: the address to refund the HTLC to if remains unclaimed after the expiration
+ * @param {String} options.expiration (optional): defaults to 1 day after the time of the function call. pass in a UNIX timestamp in seconds if you want a custom expiry.
+ * @param {String} options.network (optional): 'regtest' (default) || 'testnet' || 'bitcoin'. Will add support for litecoin and other non-bitcoin chains later
+ * @param {String} options.hash (optional): if you're in charge of producing the hash for your swap, leave this blank and we will generate one
+ *       if your counterparty gave you one, pass it in as a hex string here
+ * 
+ * @returns {Object} swapParams
+ *      @return swapParams.recipientAddress
+ *      @return swapParams.refundAddress
+ *      @return swapParams.preimage
+ *      @return swapParams.contractHash
+ *      @return swapParams.expiration     UNIX timestamp
+ *      @return swapParams.network        'regtest' | 'testnet' | 'bitcoin'
+ *      @return swapParams.addressType    'p2wsh'
+ *      @return swapParams.witnessScript  you will need this to unlock the HTLC
+ *      @return swapParams.htlcAddress    send coins to this address to lock them
+ */
 function createHTLC(options) {
   const NETWORK = options.network || 'regtest'
 
@@ -59,7 +59,6 @@ function createHTLC(options) {
   const recipientPubKeyHash = getPubKeyHash(swapParams.recipientAddress)
   const refundPubKeyHash = getPubKeyHash(swapParams.refundAddress)
   const OPS = bitcoin.script.OPS;
-
 
   // See https://en.bitcoin.it/wiki/BIP_0199 for full BIP-199 spec
   const script = bitcoin.script.compile([

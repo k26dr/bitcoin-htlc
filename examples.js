@@ -14,4 +14,4 @@ const htlc = createHTLC({
 })
 console.log(htlc)
 
-// Redeem HTLC
+// TODO: Redeem HTLC
