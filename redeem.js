@@ -4,7 +4,6 @@ const bitcoin = require('bitcoinjs-lib')
 const fs = require('fs')
 const { promisify } = require('util');
 const exec = promisify(require('child_process').exec)
-const varuint = require("varuint-bitcoin")
 
 const ECPair = ECPairFactory(ecc);
 
