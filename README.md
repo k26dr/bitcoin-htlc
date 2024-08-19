@@ -1,10 +1,27 @@
 # Bitcoin HTLC swaps
 
-See [htlc.js](htlc.js) for code to generate a bech32 address for HTLC-based atomic swaps.
+## Examples
 
-See [redeem.js](redeem.js) for code to use a valid preimage to unlock an HTLC to the specified receiver. 
+```js
+const { ECPairFactory } = require('ecpair')
+const ecc = require('tiny-secp256k1')
+const ECPair = ECPairFactory(ecc);
+const { createHTLC, redeemHTLC } = require('./htlc')
 
-A script for refunding the HTLC is under development. 
+// Generate keypairs
+const recipientKeypair = ECPair.makeRandom()
+const refundKeypair = ECPair.makeRandom()
+
+// Create HTLC
+const htlc = createHTLC({
+  recipientAddress: 'bcrt1qfjwqqxmf6ajmwy48pzs7ml33udt0smhdc8seya',
+  refundAddress: 'bcrt1q2yuazzncplkcexkzcayj886eugkttwxefvwvm3'
+})
+console.log(htlc)
+```
+
+See [examples.js](examples.js) for more examples. Documentation will be provided soon. Until then you can look at the docstrings in [htlc.js](htlc.js)
+
 
 ## Use Cases
 
