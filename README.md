@@ -1,5 +1,9 @@
 # Bitcoin HTLC swaps
 
+## Documentation
+
+See `module.exports` and the docstrings in [htlc.js](htlc.js) for available methods and detailed documentation. The examples below will probably be more useful for development.   
+
 ## Creating an HTLC
 
 ```js
@@ -59,8 +63,6 @@ Output:
   htlcAddress: 'bc1qfy23h4gwx7q0uzwklwf89fyjq4jhwga6vhuaxetej64c87wgemgsymz2aj'
 }
 ```
-
-See [examples.js](examples.js) for more examples. For documentation, look at the docstrings in [htlc.js](htlc.js)
 
 ## Redeeming an HTLC
 
