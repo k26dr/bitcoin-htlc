@@ -64,15 +64,20 @@ Output:
 }
 ```
 
-## Redeeming an HTLC
-
-First send your bitcoin to `htlc.htlcAddress`. This will lock it. 
-
-Once you do that get the raw transaction hex and inspect it to get the vout index of the HTLC. I have done it here using bitcoin-cli, but you can do it on a block explorer as well. 
+Any bitcoin you send to the `htlcAddress` will now be locked
 
 ```bash
 > bitcoin-core.cli -regtest sendtoaddress bcrt1qd730p4644wqtvfa5h3dpdyhfu4anm6mqlsqc7al8tv0k3smazs4qcpczrq 1
 2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62
+```
+
+## Redeeming an HTLC
+
+We will redeem the bitcoin sent to the HTLC in TXID `2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62` above. 
+
+Get the raw transaction hex and inspect it to get the vout index of the HTLC. I have done it here using bitcoin-cli, but you can do it on a block explorer as well. 
+
+```bash
 > bitcoin-core.cli -regtest gettransaction 2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62
 {
   "amount": -1.00000000,
