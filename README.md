@@ -9,7 +9,6 @@ See `module.exports` and the docstrings in [htlc.js](htlc.js) for available meth
 ```js
 const { createHTLC } = require('bip-199')
 
-// Create HTLC
 const htlc = createHTLC({
   recipientAddress: 'bcrt1qfjwqqxmf6ajmwy48pzs7ml33udt0smhdc8seya',
   refundAddress: 'bcrt1q2yuazzncplkcexkzcayj886eugkttwxefvwvm3'
@@ -33,10 +32,13 @@ Output:
 }
 ```
 
+## Using an existing hash sent from a counterparty
+
+If your counterpary in an atomic swap is holding the preimage, he will have to send you the hash. You can use this hash to create an HTLC, and you will be able to redeem it once he reveals the preimage on his end. We use a custom expiration as well and conduct the transaction on Bitcoin mainnet to demonstrate it. 
+
 ```js
 const { createHTLC } = require('bip-199')
 
-// Create HTLC with custom expiration and hash on mainnet
 const htlc2 = createHTLC({
   recipientAddress: 'bc1qqcjmr6de85qv2gq54y9x59ctqxc3pjeyskqtdr',
   refundAddress: 'bc1qwr3ksdcgy7dq0mgl7gs7a0ay3kdp5r5yudk6ma',
