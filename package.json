@@ -1,6 +1,6 @@
 {
   "name": "bip-199",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "BIP-199 helpers for Bitcoin HTLC and atomic swaps",
   "main": "htlc.js",
   "scripts": {},
@@ -11,5 +11,9 @@
     "bitcoinjs-lib": "^6.1.6",
     "ecpair": "^2.1.0",
     "tiny-secp256k1": "^2.2.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/k26dr/bitcoin-htlc.git"
   }
 }
