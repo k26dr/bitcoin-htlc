@@ -64,7 +64,7 @@ See [examples.js](examples.js) for more examples. Documentation will be provided
 
 ## Redeeming an HTLC
 
-First send bitcoin to htlc1.htlcAddress. Once you do that get the raw transaction hex and inspect it to get the vout index of the HTLC.
+First send bitcoin to `htlc1.htlcAddress`. Once you do that get the raw transaction hex and inspect it to get the vout index of the HTLC.
 
 ```bash
 > bitcoin-core.cli -regtest sendtoaddress bcrt1qd730p4644wqtvfa5h3dpdyhfu4anm6mqlsqc7al8tv0k3smazs4qcpczrq 1
@@ -172,6 +172,10 @@ Output:
 ```
 02000000000101626dd30d06b521160b9469e578f21c9b5cf4fc7755b2edab84fcda041aca352d0100000000ffffffff0130d9f505000000001600144775723b2f720f03489abb90356e6408e22fd0ce05473044022004235b860b5af19f13f58af6c16fb21496dc74acbb00b91ca3e2303248d08ec3022046f38e94f17286740a56f41b60068c39e90674277d132cd0821c4d1c2f89e4430121028c38a7431c0d87d69c7d4d0bc0d2ba394e59f9493990d1998b40612416bc651b2074279120f6fe355c598f0411f115a0398aa07db066ea81136f5c85219bfa0bdb01015d63a8209aa0fe59b6373bd6758caa9cb4278934568f437615937ecc4c4f8c2a0030759e8876a9144775723b2f720f03489abb90356e6408e22fd0ce6704a825c566b17576a9144775723b2f720f03489abb90356e6408e22fd0ce6888ac00000000
 ```
+
+## Refunding an HTLC
+
+WIP
 
 ## Use Cases
 
