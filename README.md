@@ -46,7 +46,6 @@ const htlc2 = createHTLC({
   network: 'bitcoin',
   expiration: (Date.now() / 1000 | 0) + 3600, // 1 hour
 })
-
 console.log(htlc2)
 ```
 
