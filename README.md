@@ -34,7 +34,11 @@ Output:
 
 ## Using an existing hash sent from a counterparty
 
-If your counterpary in an atomic swap is holding the preimage, he will have to send you the hash. You can use this hash to create an HTLC, and you will be able to redeem it once he reveals the preimage on his end. We use a custom expiration as well and conduct the transaction on Bitcoin mainnet to demonstrate it. 
+If your counterpary in an atomic swap is holding the preimage, he will have to send you the hash. 
+
+You can use this hash to create an HTLC, and you will be able to redeem it once he reveals the preimage on his end. 
+
+We use a custom expiration as well and conduct the transaction on Bitcoin mainnet to demonstrate it. 
 
 ```js
 const { createHTLC } = require('bip-199')
