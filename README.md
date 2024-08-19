@@ -6,7 +6,7 @@ See [redeem.js](redeem.js) for code to use a valid preimage to unlock an HTLC to
 
 A script for refunding the HTLC is under development. 
 
-# Use Cases
+## Use Cases
 
 - Submarine swaps on Lightning
 - Atomic swaps across Bitcoin forks like Litecoin or Bitcoin Cash. 
