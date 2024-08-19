@@ -1,7 +1,7 @@
 const { ECPairFactory } = require('ecpair')
 const ecc = require('tiny-secp256k1')
 const ECPair = ECPairFactory(ecc);
-const { createHTLC } = require('./htlc')
+const { createHTLC, redeemHTLC } = require('./htlc')
 
 // Generate keypairs
 const recipientKeypair = ECPair.makeRandom()
