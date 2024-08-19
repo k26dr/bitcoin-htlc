@@ -1,6 +1,6 @@
 # Bitcoin HTLC swaps
 
-## Examples
+## Creating an HTLC
 
 ```js
 const { ECPairFactory } = require('ecpair')
