@@ -1,5 +1,3 @@
-// TODO: Split off getWitnessHash function so others can use it
-
 const bitcoin = require('bitcoinjs-lib') 
 const crypto = require('crypto');
 const { ECPairFactory } = require('ecpair')
@@ -10,13 +8,43 @@ const ECPair = ECPairFactory(ecc);
 const HTLC_EXPIRATION = 86400
 
 module.exports = {
-  createHTLC, 
   getPubKeyHash,
-  redeemHTLC
+  getWitnessScript,
+  createHTLC, 
+  redeemHTLC,
 }
 
 function getPubKeyHash(address) {
    return bitcoin.address.fromBech32(address).data;
+}
+
+function getWitnessScript(recipientAddress, refundAddress, contractHash, expiration) {
+  const recipientPubKeyHash = getPubKeyHash(recipientAddress)
+  const refundPubKeyHash = getPubKeyHash(refundAddress)
+  const OPS = bitcoin.script.OPS;
+
+  // See https://en.bitcoin.it/wiki/BIP_0199 for full BIP-199 spec
+  const script = bitcoin.script.compile([
+      OPS.OP_IF,
+      OPS.OP_SHA256,
+      contractHash,
+      OPS.OP_EQUALVERIFY,
+      OPS.OP_DUP,
+      OPS.OP_HASH160,
+      recipientPubKeyHash,
+      OPS.OP_ELSE,
+      bitcoin.script.number.encode(expiration),
+      OPS.OP_CHECKLOCKTIMEVERIFY,
+      OPS.OP_DROP,
+      OPS.OP_DUP,
+      OPS.OP_HASH160,
+      refundPubKeyHash,
+      OPS.OP_ENDIF,
+      OPS.OP_EQUALVERIFY,
+      OPS.OP_CHECKSIG,
+  ]);
+  
+  return script
 }
 
 /*
@@ -61,30 +89,7 @@ function createHTLC(options) {
   // Network for transaction: bitcoin, regtest, or testnet
   const network = bitcoin.networks[swapParams.network]
 
-  const recipientPubKeyHash = getPubKeyHash(swapParams.recipientAddress)
-  const refundPubKeyHash = getPubKeyHash(swapParams.refundAddress)
-  const OPS = bitcoin.script.OPS;
-
-  // See https://en.bitcoin.it/wiki/BIP_0199 for full BIP-199 spec
-  const script = bitcoin.script.compile([
-      OPS.OP_IF,
-      OPS.OP_SHA256,
-      hash,
-      OPS.OP_EQUALVERIFY,
-      OPS.OP_DUP,
-      OPS.OP_HASH160,
-      recipientPubKeyHash,
-      OPS.OP_ELSE,
-      bitcoin.script.number.encode(swapParams.expiration),
-      OPS.OP_CHECKLOCKTIMEVERIFY,
-      OPS.OP_DROP,
-      OPS.OP_DUP,
-      OPS.OP_HASH160,
-      refundPubKeyHash,
-      OPS.OP_ENDIF,
-      OPS.OP_EQUALVERIFY,
-      OPS.OP_CHECKSIG,
-  ]);
+  const script = getWitnessScript(swapParams.recipientAddress, swapParams.refundAddress, hash, swapParams.expiration)
 
   const p2wsh = bitcoin.payments.p2wsh({
       redeem: { output: script, network: network },
