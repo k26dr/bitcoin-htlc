@@ -28,11 +28,31 @@ program.command('createhtlc')
   .description('Create an HTLC')
   .argument('<recipientAddress>', 'bech32 address of recipient')
   .argument('<refundAddress>', 'bech32 address for refund if HTLC expires')
-  .option('-n', '--network <network>', 'regtest|testnet|bitcoin', 'bitcoin')
-  .action(options => {
+  .option('--network <network>', 'regtest|testnet|bitcoin', 'bitcoin')
+  .option('--hash <hash>', 'custom hash to lock HTLC. hash and preimage are generated if not provided.')
+  .option('--expiration <expires>', 'UNIX timestamp to expire the HTLC. defaults to 1 day ahead of current time.')
+  .action((recipientAddress, refundAddress, options) => {
     const htlc = createHTLC({
-      recipientAddress: options.recipientAddress,
-      refundAddress: options.refundAddress,
+      recipientAddress,
+      refundAddress,
+      ...options
+    })
+    console.log(htlc)
+  });
+
+program.command('redeemhtlc')
+  .description('Redeem an HTLC')
+  .argument('<txhash>', 'Transacion hash with the HTLC output you want to unlock')
+  .argument('<vout>', 'Index of the output you want to unlock in <txhash>')
+  .requiredOption('<preimage>', 'preimage to unlock htlc')
+  .requiredOption('<recipientWIF>', 'private key of recipient address in WIF format')
+  .requiredOption('<witnessScript>', 'Witness script for HTLC in hex format')
+  .requiredOption('<feeRate>', 'Fee rate in sat/vB')
+  .action((txhash, vout, options) => {
+    const htlc = createHTLC({
+      recipientAddress,
+      refundAddress,
+      ...options
     })
     console.log(htlc)
   });

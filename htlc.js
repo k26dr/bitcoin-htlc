@@ -139,7 +139,7 @@ function redeemHTLC(options) {
       value: options.value
     }
   })
-  const txFee = options.feeRate * 200;
+  const txFee = options.feeRate * 320;
   psbt.addOutput({
     address: recipientAddress,
     value: (options.value - txFee),
@@ -202,7 +202,7 @@ function refundHTLC(options) {
       value: options.value
     }
   })
-  const txFee = options.feeRate * 200;
+  const txFee = options.feeRate * 320;
   psbt.addOutput({
     address: refundAddress,
     value: (options.value - txFee),
