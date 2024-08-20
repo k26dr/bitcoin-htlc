@@ -76,11 +76,11 @@ Output:
 }
 ```
 
-## Redeeming an HTLC
+## Determining HTLC vout
 
-We will redeem the bitcoin sent to the HTLC in TXID `2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62` in [Creating an HTLC](#creating-an-htlc). 
+To refund or redeem an HTLC you have to know the index (vout) of the HTLC output within your creation transaction. 
 
-Get the raw transaction hex and inspect it to get the vout index of the HTLC. I have done it here using bitcoin-cli, but you can do it on a block explorer as well. 
+Get the raw transaction hex and inspect it. I have done it here using bitcoin-cli, but you can do it on a block explorer as well. 
 
 ```bash
 > bitcoin-core.cli -regtest gettransaction 2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62
@@ -165,7 +165,13 @@ Get the raw transaction hex and inspect it to get the vout index of the HTLC. I 
 
 We're looking for the 1 BTC output, so you can see the vout index is 1. There's a 50% chance your vout index is actually 0, so make sure you check that. 
 
-Now run your redeem tx using that txid, value, and vout.
+## Redeeming an HTLC
+
+We will redeem the bitcoin sent to the HTLC in TXID `2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62` in [Creating an HTLC](#creating-an-htlc). 
+
+See [Determining HTLC vout](#determining-htlc-vout) for instructions on getting the vout of your HTLC. 
+
+Run your redeem tx using the txid, value, and vout of your HTLC.
 
 ```js
 const TXID = "2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62"
@@ -177,7 +183,7 @@ const redeemTxRaw = redeemHTLC({
   witnessScript: htlc.witnessScript,
   txHash: TXID,
   value,
-  feeRate: 10,
+  feeRate: 10, // sat/vB
   vout
 })
 console.log(redeemTxRaw)
@@ -199,7 +205,44 @@ Congratulations. The receiver should have received the Bitcoin.
 
 ## Refunding an HTLC
 
-Use the same
+We will refund the bitcoin sent to the HTLC in TXID `2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62` in [Creating an HTLC](#creating-an-htlc). 
+
+See [Determining HTLC vout](#determining-htlc-vout) for instructions on getting the vout of your HTLC. 
+
+The first step is to expire your HTLC. There's really no other way to do that then to wait until the expiration has been hit. You can create another HTLC without a shorter custom expiration if you don't want to wait a day. Once you have an HTLC that is expired, you can proceed with the refund. 
+
+Run your refund tx using the txid, value, and vout of your HTLC.
+
+```js
+// Example values
+const TXID = "2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62"
+const value = 1e8 // 1 bitcoin in sats
+const vout = 1
+
+const refundTxRaw = refundHTLC({
+  refundWIF: refundKeypair.toWIF(),
+  witnessScript: htlc.witnessScript,
+  txHash: TXID,
+  value,
+  feeRate: 10, // sat/vB
+  vout
+})
+console.log(refundTxRaw)
+```
+
+Output
+
+```
+02000000000101626dd30d06b521160b9469e578f21c9b5cf4fc7755b2edab84fcda041aca352d0100000000ffffffff0130d9f50500000000160014fd017c2bbed1821caa3b089d24343274047d4ef20448304502210085be9c286ef56bb98ddfba7638c48e359aea3ebb91227dd06c4a43a99ee1b7cb02203ce37f32cec277c5d83d72b42c65ea0ba571239808ed02ce2e1cd82b27c409230121039ab7c891dc72e793e82c2391f59fd6ad9f81a6cf038f4425cd3ebf4e509f7a3b005d63a82061736afa42077c2b014e42b76c2c1e6b10ad66f1cc5d9d97a0c0ba8a6622c7f48876a9146cf511286ed4bd6d699d12ee81cef4bc1dd90bc467049630c566b17576a914fd017c2bbed1821caa3b089d24343274047d4ef26888ac00000000
+```
+
+Broadcast the transaction to the network
+
+```bash
+> bitcoin-core.cli sendrawtransaction 02000000000101626dd30d06b521160b9469e578f21c9b5cf4fc7755b2edab84fcda041aca352d0100000000ffffffff0130d9f50500000000160014fd017c2bbed1821caa3b089d24343274047d4ef20448304502210085be9c286ef56bb98ddfba7638c48e359aea3ebb91227dd06c4a43a99ee1b7cb02203ce37f32cec277c5d83d72b42c65ea0ba571239808ed02ce2e1cd82b27c409230121039ab7c891dc72e793e82c2391f59fd6ad9f81a6cf038f4425cd3ebf4e509f7a3b005d63a82061736afa42077c2b014e42b76c2c1e6b10ad66f1cc5d9d97a0c0ba8a6622c7f48876a9146cf511286ed4bd6d699d12ee81cef4bc1dd90bc467049630c566b17576a914fd017c2bbed1821caa3b089d24343274047d4ef26888ac00000000
+```
+
+Congratulations. The refund address should have been refunded the Bitcoin. 
 
 ## Use Cases
 
