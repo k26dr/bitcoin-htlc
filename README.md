@@ -6,6 +6,12 @@
 * `refundHTLC` has not been fully tested. Please open an issue if you have problems.
 * Current support is only for Bitcoin. Litecoin and ZCash will be added in the next few weeks.
 
+## Use Cases
+
+- Submarine swaps on Lightning
+- Atomic swaps across Bitcoin forks like Litecoin or Bitcoin Cash. 
+- With a little extra coding, you can use this to perform atomic swaps on non-bitcoin chains like Ethereum or Solana as well. 
+
 ## Documentation
 
 See `module.exports` and the docstrings in [htlc.js](htlc.js) for available methods and detailed documentation. The examples below will probably be more useful for development.   
@@ -252,9 +258,3 @@ Broadcast the transaction to the network
 ```
 
 Congratulations. The refund address should have been refunded the Bitcoin. 
-
-## Use Cases
-
-- Submarine swaps on Lightning
-- Atomic swaps across Bitcoin forks like Litecoin or Bitcoin Cash. 
-- With a little extra coding, you can use this to perform atomic swaps on non-bitcoin chains like Ethereum or Solana as well. 
