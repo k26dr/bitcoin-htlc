@@ -199,7 +199,7 @@ Congratulations. The receiver should have received the Bitcoin.
 
 ## Refunding an HTLC
 
-WIP
+Use the same
 
 ## Use Cases
 

@@ -12,7 +12,7 @@ const recipientAddress = bitcoin.payments.p2wpkh({
     network: bitcoin.networks.regtest,
 }).address;
 const refundAddress = bitcoin.payments.p2wpkh({
-    pubkey: recipientKeypair.publicKey,
+    pubkey: refundKeypair.publicKey,
     network: bitcoin.networks.regtest,
 }).address;
 
@@ -37,7 +37,7 @@ console.log(htlc2)
 // This is a dummy redeem. It won't actually clear consensus if you try and send it with `bitcoin-core.cli sendrawtransaction` but it's here as a code example.
 const TXID = "2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62"
 const value = 1e8
-const vout = 0
+const vout = 1
 const redeemTxRaw = redeemHTLC({
   preimage: htlc.preimage,
   recipientWIF: recipientKeypair.toWIF(),
@@ -47,4 +47,18 @@ const redeemTxRaw = redeemHTLC({
   feeRate: 10,
   vout
 })
+console.log("REDEEM TX:")
 console.log(redeemTxRaw)
+
+// Refund HTLC
+// This is a dummy refund. It won't actually clear consensus if you try and send it with `bitcoin-core.cli sendrawtransaction` but it's here as a code example.
+const refundTxRaw = refundHTLC({
+  refundWIF: refundKeypair.toWIF(),
+  witnessScript: htlc.witnessScript,
+  txHash: TXID,
+  value,
+  feeRate: 10,
+  vout
+})
+console.log("REFUND TX:")
+console.log(refundTxRaw)
