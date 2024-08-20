@@ -4,7 +4,11 @@
   "description": "BIP-199 helpers for Bitcoin HTLC and atomic swaps",
   "main": "htlc.js",
   "scripts": {},
-  "keywords": ["bitcoin", "htlc", "atomic swap"],
+  "keywords": [
+    "bitcoin",
+    "htlc",
+    "atomic swap"
+  ],
   "author": "Kedar Iyer",
   "license": "ISC",
   "dependencies": {
@@ -15,5 +19,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/k26dr/bitcoin-htlc.git"
+  },
+  "devDependencies": {
+    "commander": "^12.1.0"
   }
 }
