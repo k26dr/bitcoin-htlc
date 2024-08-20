@@ -78,7 +78,7 @@ Output:
 
 ## Redeeming an HTLC
 
-We will redeem the bitcoin sent to the HTLC in TXID `2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62` above. 
+We will redeem the bitcoin sent to the HTLC in TXID `2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62` in [Creating an HTLC](#creating-an-htlc). 
 
 Get the raw transaction hex and inspect it to get the vout index of the HTLC. I have done it here using bitcoin-cli, but you can do it on a block explorer as well. 
 
