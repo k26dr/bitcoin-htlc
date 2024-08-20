@@ -1,5 +1,11 @@
 # Bitcoin HTLC swaps
 
+## Release Notes
+
+* This code is 2 weeks old. It is not yet stable. 
+* `refundHTLC` has not been fully tested. Please open an issue if you have problems.
+* Current support is only for Bitcoin. Litecoin and ZCash will be added in the next few weeks.
+
 ## Documentation
 
 See `module.exports` and the docstrings in [htlc.js](htlc.js) for available methods and detailed documentation. The examples below will probably be more useful for development.   
