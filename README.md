@@ -32,6 +32,13 @@ Output:
 }
 ```
 
+Any bitcoin you send to the `htlcAddress` will now be locked
+
+```bash
+> bitcoin-core.cli -regtest sendtoaddress bcrt1qd730p4644wqtvfa5h3dpdyhfu4anm6mqlsqc7al8tv0k3smazs4qcpczrq 1
+2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62
+```
+
 ## Using an existing hash sent from a counterparty
 
 If your counterpary in an atomic swap is holding the preimage, he will have to send you the hash. 
@@ -67,13 +74,6 @@ Output:
   witnessScript: '63a820368278313373e68a55c8361623fc06e1fa6c8251c90348fccac939879257144d8876a9144c9c001b69d765b712a708a1edfe31e356f86eed670422cdc266b17576a9145139d10a780fed8c9ac2c749239f59e22cb5b8d96888ac',
   htlcAddress: 'bc1qfy23h4gwx7q0uzwklwf89fyjq4jhwga6vhuaxetej64c87wgemgsymz2aj'
 }
-```
-
-Any bitcoin you send to the `htlcAddress` will now be locked
-
-```bash
-> bitcoin-core.cli -regtest sendtoaddress bcrt1qd730p4644wqtvfa5h3dpdyhfu4anm6mqlsqc7al8tv0k3smazs4qcpczrq 1
-2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62
 ```
 
 ## Redeeming an HTLC
