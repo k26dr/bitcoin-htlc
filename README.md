@@ -5,6 +5,7 @@
 * This code is 2 weeks old. It is not yet stable. 
 * `refundHTLC` has not been fully tested. Please open an issue if you have problems.
 * Current support is only for Bitcoin. Litecoin and ZCash will be added in the next few weeks.
+* There is a CLI client that is unfinished. Documentation will be added when it is complete. 
 
 ## Use Cases
 

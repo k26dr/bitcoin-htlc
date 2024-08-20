@@ -48,6 +48,7 @@ program.command('redeemhtlc')
   .requiredOption('<recipientWIF>', 'private key of recipient address in WIF format')
   .requiredOption('<witnessScript>', 'Witness script for HTLC in hex format')
   .requiredOption('<feeRate>', 'Fee rate in sat/vB')
+  .option('--network <network>', 'regtest|testnet|bitcoin', 'bitcoin')
   .action((txhash, vout, options) => {
     const htlc = createHTLC({
       recipientAddress,
