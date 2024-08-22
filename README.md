@@ -403,6 +403,7 @@ Address (bech32): bcrt1q2ykrmuu5ue6j30900z7urlxr2feu4r0cfv0hr4
   htlcAddress: 'bcrt1qkugjjsckkwq44774xrw882fdmfeumngxhhnpg3uquarurwrwjl6swdycru'
 }
 > bitcoin-cli -regtest sendtoaddress bcrt1qkugjjsckkwq44774xrw882fdmfeumngxhhnpg3uquarurwrwjl6swdycru 1
+9b3d8d2f72a8ee6d2b69f1db1b431f3a3d1af80648f4d9a257b3423e9adb4a8f
 ```
 
 `redeemhtlc` and `refundhtlc` return raw signed transactions that need to be broadcasted to the network
