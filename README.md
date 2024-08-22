@@ -95,7 +95,7 @@ To refund or redeem an HTLC you need to know the index (vout) of the HTLC output
 
 ### Programatically using Bitcoin Core RPC
 
-If you have access to a full node, you can get transaction vouts programatically using the Bitcoin RPC server
+If you have access to a Bitcon Core full node, you can get transaction vouts programatically using the built-in RPC server
 
 ```js
 const bitcoinCore = require('bitcoin-core')
