@@ -214,7 +214,7 @@ If you are running a Bitcoin Core full node, you can get the raw transaction hex
 }
 ```
 
-We're looking for the 1 BTC output, so you can see the vout index is 1. There's a 50% chance your vout index is actually 0, so make sure you check that. 
+We're looking for the 1 BTC output, so you can see the vout index is 1. 
 
 ## Redeeming an HTLC
 
