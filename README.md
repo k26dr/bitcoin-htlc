@@ -91,7 +91,7 @@ Output:
 
 ## Determining HTLC vout
 
-To refund or redeem an HTLC you have to know the index (vout) of the HTLC output within your creation transaction. 
+To refund or redeem an HTLC you need to know the index (vout) of the HTLC output within your creation transaction. 
 
 ### Programatically Using a Block Explorer
 
