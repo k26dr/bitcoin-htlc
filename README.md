@@ -45,7 +45,9 @@ Output:
 }
 ```
 
-Any bitcoin you send to the `htlcAddress` will now be locked
+Save the preimage and hash somewhere secure. You will need the preimage to unlock the HTLC when you redeem.
+
+Any bitcoin you send to the `htlcAddress` will now be locked to that hash until expiry. 
 
 ```bash
 > bitcoin-core.cli -regtest sendtoaddress bcrt1qd730p4644wqtvfa5h3dpdyhfu4anm6mqlsqc7al8tv0k3smazs4qcpczrq 1
@@ -406,7 +408,9 @@ Address (bech32): bcrt1q2ykrmuu5ue6j30900z7urlxr2feu4r0cfv0hr4
 9b3d8d2f72a8ee6d2b69f1db1b431f3a3d1af80648f4d9a257b3423e9adb4a8f
 ```
 
-`redeemhtlc` and `refundhtlc` return raw signed transactions that need to be broadcasted to the network
+Save the preimage somewhere safe. you will need it to redeem the HTLC.
+
+`redeemhtlc` and `refundhtlc` return raw signed transactions that need to be broadcast to the network
 
 ```bash
 > node cli.js redeemhtlc 1e8ca887798d302d0e673e454ec151d89442d85812cbaddd2da4fdfb3a16fae0 1 --network regtest --preimage ccf49d8f0c8995e597dd87b360ea6208d7db20ec3ea60f305b16ab9dcb10899c --recipientWIF L2ip9uxsG5oqJZbpN4GFvmPFns2MBNMJG1yriZccWBNVB46nWYrz --witnessScript 63a820a81ecf3772bac085103b62e67d1d138499b1becd0f308afc6e426500b40c3d268876a914ab43732963d284fe87b5efb482a3221f40815988670492a7c866b17576a914b223ca95864e468814881281a5caf3e3194e73f86888ac --feeRate 10 --valueBTC 0.2
