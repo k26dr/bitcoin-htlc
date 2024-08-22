@@ -44,16 +44,24 @@ program.command('redeemhtlc')
   .description('Redeem an HTLC')
   .argument('<txhash>', 'Transacion hash with the HTLC output you want to unlock')
   .argument('<vout>', 'Index of the output you want to unlock in <txhash>')
-  .requiredOption('<preimage>', 'preimage to unlock htlc')
-  .requiredOption('<recipientWIF>', 'private key of recipient address in WIF format')
-  .requiredOption('<witnessScript>', 'Witness script for HTLC in hex format')
-  .requiredOption('<feeRate>', 'Fee rate in sat/vB')
+  .requiredOption('--valueBTC <valueBTC>', "value of the HTLC you're looking to unlock in BTC")
+  .requiredOption('--preimage <preimage>', 'preimage to unlock htlc')
+  .requiredOption('--recipientWIF <recipientWIF>', 'private key of recipient address in WIF format')
+  .requiredOption('--witnessScript <witnessScript>', 'Witness script for HTLC in hex format')
+  .requiredOption('--feeRate <feeRate>', 'Fee rate in sat/vB')
   .option('--network <network>', 'regtest|testnet|bitcoin', 'bitcoin')
   .action((txhash, vout, options) => {
-    const htlc = createHTLC({
-      recipientAddress,
-      refundAddress,
-      ...options
+    const value = Number(options.valueBTC * 1e8)
+    if (isNaN(value)) {
+      console.log("bad input for <value>")
+      return
+    }
+    const htlc = redeemHTLC({
+      txHash: txhash,
+      vout: Number(vout),
+      ...options,
+      feeRate: Number(options.feeRate),
+      value
     })
     console.log(htlc)
   });

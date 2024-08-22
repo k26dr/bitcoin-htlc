@@ -116,7 +116,6 @@ function createHTLC(options) {
  * @return {String}                       Raw redeem transaction to broadcast to network. send it with `bitcoin-cli sendrawtransaction <transaction>`
 */
 function redeemHTLC(options) {
-  const vout = options.vout || 0
   const recipientKeypair = ECPair.fromWIF(options.recipientWIF)
   const recipientAddress = bitcoin.payments.p2wpkh({
       pubkey: recipientKeypair.publicKey,
@@ -132,7 +131,7 @@ function redeemHTLC(options) {
   const psbt = new bitcoin.Psbt({ network: bitcoin.networks[options.network] })
   psbt.addInput({
     hash: options.txHash,
-    index: vout, 
+    index: options.vout, 
     witnessScript: Buffer.from(options.witnessScript, 'hex'),
     witnessUtxo: {
       script: witnessUtxoScript,
