@@ -93,7 +93,42 @@ Output:
 
 To refund or redeem an HTLC you have to know the index (vout) of the HTLC output within your creation transaction. 
 
-Get the raw transaction hex and inspect it. I have done it here using bitcoin-cli, but you can do it on a block explorer as well. 
+### Programatically Using a Block Explorer
+
+For this example, I am using [mempool.space](https://mempool.space) and an arbitrary txid. You can use any block explorer that supports pulling raw hex data.
+
+```js
+const bitcoin = require('bitcoinjs-lib')
+const axios = require('axios')
+
+async function getTxOuts (txid) {
+  const rawTx = await axios.get('https://mempool.space/api/tx/' + txid + '/hex')
+  const tx = bitcoin.Transaction.fromHex(rawTx.data)
+  return tx.outs
+}
+
+const TXID = "f318d73cae78fb9c312aac8c0bfce9d55fa9ab8e1e0ac75cb572deac74e20601"
+getTxOuts(TXID).then(console.log)
+```
+
+```
+[
+  {
+    value: 11000,
+    script: <Buffer 00 14 46 ae 1e 9a 4a 3b 6d cc 70 e1 de 61 14 7e 27 31 34 e7 49 0d>
+  },
+  {
+    value: 6482,
+    script: <Buffer 51 20 9c 87 b9 0f 3a b2 6a ff b5 50 5a 68 49 df 81 7b c1 e9 6f ad f5 4e b4 ac fc d7 92 91 70 ad 3a f6>
+  }
+]
+```
+
+You can now pick the index of the output you want to unlock. 
+
+### Manually using bitcoin-cli
+
+If you are running a Bitcoin Core full node, you can get the raw transaction hex and inspect it. 
 
 ```bash
 > bitcoin-core.cli -regtest gettransaction 2d35ca1a04dafc84abedb25577fcf45c9b1cf278e569940b1621b5060dd36d62
