@@ -41,7 +41,7 @@ program.command('createhtlc')
   });
 
 program.command('redeemhtlc')
-  .description('Redeem an HTLC')
+  .description('Get a raw transaction hex to redeem an HTLC')
   .argument('<txhash>', 'Transacion hash with the HTLC output you want to unlock')
   .argument('<vout>', 'Index of the output you want to unlock in <txhash>')
   .requiredOption('--valueBTC <valueBTC>', "value of the HTLC you're looking to unlock in BTC")
@@ -67,11 +67,10 @@ program.command('redeemhtlc')
   });
 
 program.command('refundhtlc')
-  .description('Refund an HTLC')
+  .description('Get a raw transaction hex to refund an HTLC')
   .argument('<txhash>', 'Transacion hash with the HTLC output you want to unlock')
   .argument('<vout>', 'Index of the output you want to unlock in <txhash>')
   .requiredOption('--valueBTC <valueBTC>', "value of the HTLC you're looking to unlock in BTC")
-  .requiredOption('--preimage <preimage>', 'preimage to unlock htlc')
   .requiredOption('--refundWIF <refundWIF>', 'private key of recipient address in WIF format')
   .requiredOption('--witnessScript <witnessScript>', 'Witness script for HTLC in hex format')
   .requiredOption('--feeRate <feeRate>', 'Fee rate in sat/vB')

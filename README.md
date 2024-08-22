@@ -5,7 +5,6 @@
 * This code is 2 weeks old. It is not yet stable. 
 * `refundHTLC` has not been fully tested. Please open an issue if you have problems.
 * Current support is only for Bitcoin. Litecoin and ZCash will be added in the next few weeks.
-* There is a CLI client that is unfinished. Documentation will be added when it is complete. 
 
 ## Use Cases
 
@@ -334,3 +333,89 @@ Broadcast the transaction to the network
 ```
 
 Congratulations. The refund address should have been refunded the Bitcoin. 
+
+# CLI
+
+The `cli.js` files contains a command-line client to interact with the BIP-199 library. 
+
+Run the client without any arguments to get a help page. 
+
+```bash
+> node cli.js
+
+Usage: bitcoin-htlc [options] [command]
+
+BIP-199 and atomic swap helpers for Node.js
+
+Options:
+  -V, --version                                            output the version number
+  -h, --help                                               display help for command
+
+Commands:
+  createkeypair [options]                                  Create a keypair
+  createhtlc [options] <recipientAddress> <refundAddress>  Create an HTLC
+  redeemhtlc [options] <txhash> <vout>                     Redeem an HTLC
+  refundhtlc [options] <txhash> <vout>                     Refund an HTLC
+  help [command]                                           display help for command
+```
+
+Each command has a help page as well: 
+
+```bash
+> node cli.js help createhtlc
+
+Usage: bitcoin-htlc createhtlc [options] <recipientAddress> <refundAddress>
+
+Create an HTLC
+
+Arguments:
+  recipientAddress        bech32 address of recipient
+  refundAddress           bech32 address for refund if HTLC expires
+
+Options:
+  --network <network>     regtest|testnet|bitcoin (default: "bitcoin")
+  --hash <hash>           custom hash to lock HTLC. hash and preimage are generated if not provided.
+  --expiration <expires>  UNIX timestamp to expire the HTLC. defaults to 1 day ahead of current time.
+  -h, --help              display help for command
+```
+
+## Examples
+
+
+```bash
+> node cli.js createhtlc bcrt1q4dphx2tr62z0apa4a76g9gezraqgzkvgtaev3l bcrt1qkg3u49vxfergs9ygz2q6tjhnuvv5uulc0t7ad7 --network regtest
+{
+  recipientAddress: 'bcrt1q4dphx2tr62z0apa4a76g9gezraqgzkvgtaev3l',
+  refundAddress: 'bcrt1qkg3u49vxfergs9ygz2q6tjhnuvv5uulc0t7ad7',
+  preimage: '29a96993b68c87ef3f55c67e2773b90139c521025b0b18919484bcd3ae94eb01',
+  contractHash: '4413078df9063acbfdaed6ada9a44e6051965ed8a547d9ea040b1ebe41bf8ade',
+  expiration: 1724428870,
+  network: 'regtest',
+  addressType: 'p2wsh',
+  witnessScript: '63a8204413078df9063acbfdaed6ada9a44e6051965ed8a547d9ea040b1ebe41bf8ade8876a914ab43732963d284fe87b5efb482a3221f40815988670446b2c866b17576a914b223ca95864e468814881281a5caf3e3194e73f86888ac',
+  htlcAddress: 'bcrt1qkugjjsckkwq44774xrw882fdmfeumngxhhnpg3uquarurwrwjl6swdycru'
+}
+```
+
+`redeemhtlc` and `refundhtlc` return raw signed transactions that need to be broadcasted to the network
+
+```bash
+> node cli.js redeemhtlc 1e8ca887798d302d0e673e454ec151d89442d85812cbaddd2da4fdfb3a16fae0 1 --network regtest --preimage ccf49d8f0c8995e597dd87b360ea6208d7db20ec3ea60f305b16ab9dcb10899c --recipientWIF L2ip9uxsG5oqJZbpN4GFvmPFns2MBNMJG1yriZccWBNVB46nWYrz --witnessScript 63a820a81ecf3772bac085103b62e67d1d138499b1becd0f308afc6e426500b40c3d268876a914ab43732963d284fe87b5efb482a3221f40815988670492a7c866b17576a914b223ca95864e468814881281a5caf3e3194e73f86888ac --feeRate 10 --valueBTC 0.2
+
+02000000000101e0fa163afbfda42dddadcb1258d84294d851c14e453e670e2d308d7987a88c1e0100000000ffffffff018020310100000000160014ab43732963d284fe87b5efb482a3221f40815988054730440220213797ec18aee4857e1067212314fe2857d90d2da6dbcf2166db5739fc4d907602204dbe6fbb33a078939f8cb33039bc2cd97f9f7b2d88a6b794ba0e4b582a5d4ee00121035f15f7a38030e59c33e066cba47eb66153882fbc6a7dc477ba82973862573b5520ccf49d8f0c8995e597dd87b360ea6208d7db20ec3ea60f305b16ab9dcb10899c01015d63a820a81ecf3772bac085103b62e67d1d138499b1becd0f308afc6e426500b40c3d268876a914ab43732963d284fe87b5efb482a3221f40815988670492a7c866b17576a914b223ca95864e468814881281a5caf3e3194e73f86888ac00000000
+
+> bitcoin-cli sendrawtransaction 02000000000101e0fa163afbfda42dddadcb1258d84294d851c14e453e670e2d308d7987a88c1e0100000000ffffffff018020310100000000160014ab43732963d284fe87b5efb482a3221f40815988054730440220213797ec18aee4857e1067212314fe2857d90d2da6dbcf2166db5739fc4d907602204dbe6fbb33a078939f8cb33039bc2cd97f9f7b2d88a6b794ba0e4b582a5d4ee00121035f15f7a38030e59c33e066cba47eb66153882fbc6a7dc477ba82973862573b5520ccf49d8f0c8995e597dd87b360ea6208d7db20ec3ea60f305b16ab9dcb10899c01015d63a820a81ecf3772bac085103b62e67d1d138499b1becd0f308afc6e426500b40c3d268876a914ab43732963d284fe87b5efb482a3221f40815988670492a7c866b17576a914b223ca95864e468814881281a5caf3e3194e73f86888ac00000000
+
+f3af089519fa5a77354797f8dcb6cbc099f44eca3bc7a67b4962277d10ec29e4
+```
+
+```bash
+> node cli.js refundhtlc 1e8ca887798d302d0e673e454ec151d89442d85812cbaddd2da4fdfb3a16fae0 1 --network regtest --refundWIF L2ip9uxsG5oqJZbpN4GFvmPFns2MBNMJG1yriZccWBNVB46nWYrz --witnessScript 63a820a81ecf3772bac085103b62e67d1d138499b1becd0f308afc6e426500b40c3d268876a914ab43732963d284fe87b5efb482a3221f40815988670492a7c866b17576a914b223ca95864e468814881281a5caf3e3194e73f86888ac --feeRate 10 --valueBTC 0.2
+
+02000000000101e0fa163afbfda42dddadcb1258d84294d851c14e453e670e2d308d7987a88c1e0100000000ffffffff018020310100000000160014ab43732963d284fe87b5efb482a3221f40815988044730440220213797ec18aee4857e1067212314fe2857d90d2da6dbcf2166db5739fc4d907602204dbe6fbb33a078939f8cb33039bc2cd97f9f7b2d88a6b794ba0e4b582a5d4ee00121035f15f7a38030e59c33e066cba47eb66153882fbc6a7dc477ba82973862573b55005d63a820a81ecf3772bac085103b62e67d1d138499b1becd0f308afc6e426500b40c3d268876a914ab43732963d284fe87b5efb482a3221f40815988670492a7c866b17576a914b223ca95864e468814881281a5caf3e3194e73f86888ac00000000
+
+> bitcoin-cli sendrawtransaction 02000000000101e0fa163afbfda42dddadcb1258d84294d851c14e453e670e2d308d7987a88c1e0100000000ffffffff018020310100000000160014ab43732963d284fe87b5efb482a3221f40815988044730440220213797ec18aee4857e1067212314fe2857d90d2da6dbcf2166db5739fc4d907602204dbe6fbb33a078939f8cb33039bc2cd97f9f7b2d88a6b794ba0e4b582a5d4ee00121035f15f7a38030e59c33e066cba47eb66153882fbc6a7dc477ba82973862573b55005d63a820a81ecf3772bac085103b62e67d1d138499b1becd0f308afc6e426500b40c3d268876a914ab43732963d284fe87b5efb482a3221f40815988670492a7c866b17576a914b223ca95864e468814881281a5caf3e3194e73f86888ac00000000
+
+f3af089519fa5a77354797f8dcb6cbc099f44eca3bc7a67b4962277d10ec29e4
+```
+
