@@ -12,16 +12,30 @@ program
   .description('BIP-199 and atomic swap helpers for Node.js')
   .version('1.0.7');
 
-program.command('rescuepreimage')
-  .description("Did you lose the preimage to your hash? If you're lucky we stored a backup. Give it a shot.")
-  .argument('<hash>', 'the hash you want to retrieve the preimage for')
-  .action(hash => {
-    const file = fs.readFileSync('.preimages.backup', 'utf8')
-    const hashes = []
+program.command('rescuehtlc')
+  .description("Did you lose your HTLC data? If you're lucky we stored a backup. Give it a shot.")
+  .argument('<htlcAddress>', 'the hash you want to retrieve the preimage for in HEX format')
+  .action(htlcAddress => {
+    const file = fs.readFileSync('.htlc.backup', 'utf8')
+    const htlcs = []
     for (let line of file.split('\n')) {
-      hashes[line.split(' ')[1]] = line.split(' ')[0]
+      htlcs[line.split(' ')[0]] = line
     }
-    console.log(hashes[hash])
+    if (!htlcs[htlcAddress]) {
+      console.log("No HTLC found")
+      return
+    }
+    const htlc = JSON.parse(htlcs[htlcAddress].split(' ')[1])
+    console.log(htlc)
+  });
+
+program.command('rescuewitnessscript')
+  .description("Did you lose the witness script for your hash? If you're lucky we stored a backup. Give it a shot.")
+  .argument('<hash>', 'HTLC contract hash')
+  .argument('<recipientAddress>', 'bech32 address of recipient')
+  .argument('<refundAddress>', 'bech32 address for refund if HTLC expires')
+  .action((hash, recipientAddress, refundAddress) => {
+    getWitnessScript(recipientAddress, refundAddress, hash, expiration)
   });
 
 program.command('createkeypair')
@@ -50,6 +64,11 @@ program.command('createhtlc')
       refundAddress,
       ...options
     })
+
+    // Save a backup of all HTLCs
+    const line = htlc.htlcAddress + ' ' + JSON.stringify(htlc) + '\n'
+    fs.appendFileSync('.htlc.backup', line)
+
     console.log(htlc)
   });
 
@@ -58,7 +77,7 @@ program.command('redeemhtlc')
   .argument('<txhash>', 'Transacion hash with the HTLC output you want to unlock')
   .argument('<vout>', 'Index of the output you want to unlock in <txhash>')
   .requiredOption('--valueBTC <valueBTC>', "value of the HTLC you're looking to unlock in BTC")
-  .requiredOption('--preimage <preimage>', 'preimage to unlock htlc')
+  .requiredOption('--preimage <preimage>', 'preimage to unlock htlc in HEX format')
   .requiredOption('--recipientWIF <recipientWIF>', 'private key of recipient address in WIF format')
   .requiredOption('--witnessScript <witnessScript>', 'Witness script for HTLC in hex format')
   .requiredOption('--feeRate <feeRate>', 'Fee rate in sat/vB')

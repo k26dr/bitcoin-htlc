@@ -78,10 +78,6 @@ function createHTLC(options) {
   // if a hash is specified use that. otherwise generate one and return the hash + preimage
   const hash = options.hash ? Buffer.from(options.hash, 'hex') : bitcoin.crypto.sha256(preimage)
 
-  // Append all preimages to .preimages.backup so we can retrieve them if the user loses their preimage
-  const line = preimage.toString('hex') + ' ' + hash.toString('hex') + '\n'
-  fs.appendFileSync('.preimages.backup', line)
-
   const swapParams = {
     recipientAddress: options.recipientAddress,
     refundAddress: options.refundAddress,
