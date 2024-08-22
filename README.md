@@ -382,6 +382,12 @@ Options:
 
 ## Examples
 
+```bash
+> node cli.js createkeypair --network regtest
+Private Key (WIF): L34qRfch5BZFA4DS7BuNSZR632QZUtLA4YzaqYMbZF7WoRR7KdRX
+Address (bech32): bcrt1q2ykrmuu5ue6j30900z7urlxr2feu4r0cfv0hr4
+```
+
 
 ```bash
 > node cli.js createhtlc bcrt1q4dphx2tr62z0apa4a76g9gezraqgzkvgtaev3l bcrt1qkg3u49vxfergs9ygz2q6tjhnuvv5uulc0t7ad7 --network regtest
