@@ -93,6 +93,46 @@ Output:
 
 To refund or redeem an HTLC you need to know the index (vout) of the HTLC output within your creation transaction. 
 
+### Programatically using Bitcoin Core RPC
+
+If you have access to a full node, you can get transaction vouts programatically using the Bitcoin RPC server
+
+```js
+const bitcoinCore = require('bitcoin-core')
+const bitcoin = require('bitcoinjs-lib')
+
+const client = new bitcoinCore({
+  network: 'mainnet',
+  username: 'hello',
+  password: 'bitcoin'
+});
+
+async function getTxOuts (txid) {
+  const rpcTx = await client.command('gettransaction', txid)
+  return bitcoin.Transaction.fromHex(rpcTx.hex).outs
+}
+
+const TXID = "d8e375b891307145d7eec99e7077329b90f5496c983d0d7a43996d7bd2d4f437"
+getTxOuts(TXID).then(console.log)
+```
+
+Output
+
+```
+[
+  {
+    value: 10000,
+    script: <Buffer 00 14 d2 bd 7b 44 8e e1 95 98 c7 96 51 4b 60 e0 b3 b2 12 88 0a d6>
+  },
+  {
+    value: 3156826,
+    script: <Buffer 00 14 12 c6 bc a0 cb fe 19 b0 2d d5 a7 ea c8 5a 0c 02 08 1e 44 dc>
+  }
+]
+```
+
+Then you can select the index of the UTXO you want to unlock. 
+
 ### Programatically Using a Block Explorer
 
 For this example, I am using [mempool.space](https://mempool.space) and an arbitrary txid. You can use any block explorer that supports pulling raw hex data.
