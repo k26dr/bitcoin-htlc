@@ -5,11 +5,24 @@ const { createHTLC, redeemHTLC, refundHTLC } = require('./htlc')
 const bitcoin = require('bitcoinjs-lib')
 const { Command } = require('commander');
 const program = new Command();
+const fs = require('fs')
 
 program
   .name('bitcoin-htlc')
   .description('BIP-199 and atomic swap helpers for Node.js')
   .version('1.0.7');
+
+program.command('rescuepreimage')
+  .description("Did you lose the preimage to your hash? If you're lucky we stored a backup. Give it a shot.")
+  .argument('<hash>', 'the hash you want to retrieve the preimage for')
+  .action(hash => {
+    const file = fs.readFileSync('.preimages.backup', 'utf8')
+    const hashes = []
+    for (let line of file.split('\n')) {
+      hashes[line.split(' ')[1]] = line.split(' ')[0]
+    }
+    console.log(hashes[hash])
+  });
 
 program.command('createkeypair')
   .description('Create a keypair')
