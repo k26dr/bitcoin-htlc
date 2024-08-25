@@ -45,7 +45,9 @@ Output:
 }
 ```
 
-Save the preimage and hash somewhere secure. You will need the preimage to unlock the HTLC when you redeem.
+Save the HTLC JSON somewhere secure. If you lose the HTLC, you'll be unable to retrieve your funds. 
+
+If you're doing this process non-programatically, I would recommend you use the CLI. It will automatically store a backup for you that you can access later. 
 
 Any bitcoin you send to the `htlcAddress` will now be locked to that hash until expiry. 
 

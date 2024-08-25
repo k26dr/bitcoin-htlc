@@ -29,8 +29,8 @@ program.command('rescuehtlc')
     console.log(htlc)
   });
 
-program.command('rescuewitnessscript')
-  .description("Did you lose the witness script for your hash? If you're lucky we stored a backup. Give it a shot.")
+program.command('refundscript')
+  .description('Use this to generate the refund script if you lost your HTLC info')
   .argument('<hash>', 'HTLC contract hash')
   .argument('<recipientAddress>', 'bech32 address of recipient')
   .argument('<refundAddress>', 'bech32 address for refund if HTLC expires')
