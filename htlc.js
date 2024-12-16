@@ -7,13 +7,21 @@ const fs = require('fs')
 
 
 const HTLC_EXPIRATION = 86400
+const WBTC_CONTRACT_ADDRESSES = {
+  'ethereum': '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599'
+}
+const ERC20_ATOMIC_SWAP_CONTRACTS = {
+  'ethereum': '0x67414d348baa535D79d21D166FaD82Cedcd40b62'
+}
 
 module.exports = {
   getPubKeyHash,
   getWitnessScript,
   createHTLC, 
   redeemHTLC,
-  refundHTLC
+  refundHTLC,
+  WBTC_CONTRACT_ADDRESSES,
+  lockWBTC
 }
 
 function getPubKeyHash(address) {
@@ -228,4 +236,26 @@ function refundHTLC(options) {
   psbt.updateInput(0, { finalScriptWitness })
 
   return psbt.extractTransaction().toHex()
+}
+
+/**
+ * Lock WBTC on ETH L1
+ * @param {Object} options
+ * @param {String} options.network                  Network to execute swap: 'ethereum' | 'sepolia' (support WIP)
+ * @param {String} options.depositerPrivateKey      Private key of depositer
+ * @param {String} options.receiverAddress          Address of receiver
+ * @param {String} options.amount                   Amount of WBTC to lock in sats
+ * @param {String} options.hash (optional): if you're in charge of producing the hash for your swap, leave this blank and we will generate one
+ *       if your counterparty gave you one, pass it in as a hex string here
+*/
+function lockWBTC(options) {
+  const wallet = new ethers.Wallet(options.depositerPrivateKey)
+  const atomicSwapErc20Abi = JSON.parse(fs.readFileSync('AtomicSwapERC20.abi'))
+  const atomicswap = new ethers.Contract(ERC20_ATOMIC_SWAP_CONTRACTS[network], atomicSwapErc20Abi, wallet)
+
+  // if a hash is specified use that. otherwise generate one and return the hash + preimage
+  const preimage = options.hash ? Buffer.alloc(0) : Buffer.from(crypto.getRandomValues(new Uint8Array(32))) 
+  const hash = options.hash ? Buffer.from(options.hash, 'hex') : bitcoin.crypto.sha256(preimage)
+
+  atomicswap.depositToHash(WBTC_CONTRACT_ADDRESSES[network], options.receiverAddress, options.amount, hash, HTLC_EXPIRATION)
 }

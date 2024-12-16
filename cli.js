@@ -1,7 +1,7 @@
 const { ECPairFactory } = require('ecpair')
 const ecc = require('tiny-secp256k1')
 const ECPair = ECPairFactory(ecc);
-const { createHTLC, redeemHTLC, refundHTLC } = require('./htlc')
+const { createHTLC, redeemHTLC, refundHTLC, lockWBTC } = require('./htlc')
 const bitcoin = require('bitcoinjs-lib')
 const { Command } = require('commander');
 const program = new Command();
@@ -121,6 +121,14 @@ program.command('refundhtlc')
       value
     })
     console.log(rawTx)
+  });
+
+program.command('lockwbtc')
+  .description('Lock WBTC on ETH L1')
+  .argument('<amount>', 'Amount of WBTC you want to lock')
+  .option('--network <network>', 'mainnet|sepolia', 'mainnet')
+  .option('--rpcurl <rpcurl>', 'your preferred ETH RPC', 'https://eth.llamarpc.com')
+  .action((amount, options) => {
   });
 
 program.parse();
