@@ -1,6 +1,6 @@
 {
   "name": "bip-199",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "BIP-199 helpers for Bitcoin HTLC and atomic swaps",
   "main": "htlc.js",
   "scripts": {},
