@@ -2,8 +2,9 @@
 
 ## Release Notes
 
+* This code is less than 1 year old. Use it with caution.
 * `refundHTLC` has not been fully tested. Please open an issue if you have problems.
-* Current support is only for Bitcoin. Litecoin and ZCash will be added in the next few weeks.
+* Current support is only for Bitcoin. Litecoin and ZCash will be added upon request. Open an issue if you want it. 
 * There is a CLI client included. `node cli.js help` will get you documentation for that, and examples are included at the end of this README
 
 ## Use Cases
