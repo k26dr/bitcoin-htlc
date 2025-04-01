@@ -10,7 +10,7 @@
 
 - Submarine swaps on Lightning
 - Atomic swaps across Bitcoin forks like Litecoin or Bitcoin Cash. 
-- With a little extra coding, you can use this to perform atomic swaps on non-bitcoin chains like Ethereum or Solana as well. 
+- If you need a smart contract to enable a service that allows atomic swaps between Bitcoin and Ethereum, you can use the AtomicSwap contract [here](https://gist.github.com/k26dr/1c0af928b53b2f173fc202ce5b610dd9)
 
 ## Documentation
 
