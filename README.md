@@ -10,7 +10,7 @@
 
 - Submarine swaps on Lightning
 - Atomic swaps across Bitcoin forks like Litecoin or Bitcoin Cash. 
-- If you need a smart contract to enable a service that allows atomic swaps between Bitcoin and Ethereum, you can use the AtomicSwap contract [here](https://gist.github.com/k26dr/1c0af928b53b2f173fc202ce5b610dd9)
+- If you need a smart contract to conduct atomic swaps between Bitcoin and Ethereum, you can use the Solidity contract [here](https://gist.github.com/k26dr/1c0af928b53b2f173fc202ce5b610dd9). ERC-20 tokens can use [this](https://gist.github.com/k26dr/815347b487f7083775dfa51c84b9447e) contract. These contracts are unaudited so please use them with caution. I would advise getting a professional audit firm if you want to use these in a production service.
 
 ## Documentation
 
